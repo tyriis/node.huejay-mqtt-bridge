@@ -115,7 +115,7 @@ let handleMessage = (topic, message) => {
                 return handleLightSet(topic, message);
             });
         } else {
-            queue = handleLightSet(topic, message).finally(() => {
+            queue = Promise.all([handleLightSet(topic, message)]).finally(() => {
                 queue = null;
             });
         }
@@ -125,7 +125,7 @@ let handleMessage = (topic, message) => {
                 return handleGroupSet(topic, message);
             });
         } else {
-            queue = handleGroupSet(topic, message).finally(() => {
+            queue = Promise.all([handleGroupSet(topic, message)]).finally(() => {
                 queue = null;
             });
         }
