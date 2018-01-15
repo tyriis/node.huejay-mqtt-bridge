@@ -7,11 +7,13 @@ let hue;
 let mqtt;
 let username = 'Kyh3N-uR363SRVb2bzMaH7eNzDOtEcyhWy5v5sM0';
 let baseTopic = 'device/hue-bridge';
+let queue;
 
 let colorTemps = {
     'konzentrieren': 233,
     'lesen': 346,
-    'energie': 156
+    'energie': 156,
+    'entspannen': 447 // bri 144
 };
 
 async function publish(topic, msg, options) {
@@ -108,9 +110,25 @@ let handleGroupSet = (topic, message) => {
 
 let handleMessage = (topic, message) => {
     if (topic.indexOf(`${baseTopic}/light/`) === 0) {
-        return handleLightSet(topic, message);
+        if (queue) {
+            queue.then(() => {
+                return handleLightSet(topic, message);
+            });
+        } else {
+            queue = handleLightSet(topic, message).finally(() => {
+                queue = null;
+            });
+        }
     } else if (topic.indexOf(`${baseTopic}/group/`) === 0) {
-        return handleGroupSet(topic, message);
+        if (queue) {
+            queue.then(() => {
+                return handleGroupSet(topic, message);
+            });
+        } else {
+            queue = handleGroupSet(topic, message).finally(() => {
+                queue = null;
+            });
+        }
     }
 };
 
@@ -181,7 +199,7 @@ async function poll() {
         console.log('Polling...' + (++cnt));
         hue.lights.getAll().then(lights => {
             for (let light of lights) {
-                handleLightState(light)
+                handleLightState(light);
             }
         });
         hue.groups.getAll().then(groups => {
