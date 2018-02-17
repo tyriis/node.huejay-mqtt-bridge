@@ -53,7 +53,7 @@ async function getMQTTClient() {
     try {
         let client =  MQTT.connect("tcp://mqtt.lan:1883", {
             clientId: 'huejay-mqtt-bridge',
-            clean: true,
+            clean: false,
             will: {
                 topic: baseTopic + '/status',
                 payload: '0',
@@ -193,10 +193,8 @@ let handleGroupState = (group) => {
     }
 };
 
-let cnt = 0;
 async function poll() {
     return await Promise.resolve().then(function() {
-        console.log('Polling...' + (++cnt));
         hue.lights.getAll().then(lights => {
             for (let light of lights) {
                 handleLightState(light);

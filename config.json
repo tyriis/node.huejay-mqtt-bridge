@@ -1,0 +1,11 @@
+{
+  "hue": {
+    "host":       "192.168.1.151",
+    "username":   "Kyh3N-uR363SRVb2bzMaH7eNzDOtEcyhWy5v5sM0"
+  },
+  "mqtt": {
+    "url":        "tcp://mqtt.lan:1883",
+    "baseTopic":  "device/hue-bridge",
+    "clientId":   "hue-bridge"
+  }
+}
